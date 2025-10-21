@@ -1,0 +1,30 @@
+{
+  "name": "linelens-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "LineLens Frontend - Queue Management and Prediction System",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.4.1",
+    "axios": "^1.5.0",
+    "pinia": "^2.1.6",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.3.4",
+    "@vue/test-utils": "^2.4.1",
+    "autoprefixer": "^10.4.15",
+    "jsdom": "^22.1.0",
+    "postcss": "^8.4.29",
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.4.9",
+    "vitest": "^0.34.3"
+  }
+}
