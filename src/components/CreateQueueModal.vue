@@ -64,7 +64,7 @@
           <div v-else>
             <label class="label">Address</label>
             <input
-              v-model="form.location"
+              v-model="form.locationString"
               type="text"
               required
               class="input-field"
@@ -140,13 +140,14 @@ import { ref, reactive } from 'vue'
 import { useQueueStore } from '../stores/queueStore'
 const queueStore = useQueueStore()
 
-const locationType = ref('coordinates')
+const locationType = ref('address')
 const loading = ref(false)
 const error = ref('')
 
 const form = reactive({
   queueID: '',
   location: { latitude: null, longitude: null },
+  locationString: '',
   estWaitTime: null,
   estPplInLine: null,
   virtualCheckInEligible: false
@@ -161,7 +162,7 @@ const handleSubmit = async () => {
       queueID: form.queueID,
       location: locationType.value === 'coordinates' 
         ? form.location 
-        : form.location,
+        : form.locationString,
       estWaitTime: form.estWaitTime || null,
       estPplInLine: form.estPplInLine || null,
       virtualCheckInEligible: form.virtualCheckInEligible
@@ -169,17 +170,7 @@ const handleSubmit = async () => {
 
     await queueStore.createQueue(queueData)
     
-    // Create the queue object for the parent component
-    const newQueue = {
-      queueID: form.queueID,
-      location: queueData.location,
-      estWaitTime: form.estWaitTime,
-      estPplInLine: form.estPplInLine,
-      virtualCheckInEligible: form.virtualCheckInEligible,
-      lastUpdated: new Date().toISOString()
-    }
-
-    emit('created', newQueue)
+    emit('created')
   } catch (err) {
     error.value = err.message || 'Failed to create queue'
   } finally {

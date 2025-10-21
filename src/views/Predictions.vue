@@ -45,10 +45,10 @@
     <!-- Predictions List -->
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       <PredictionCard
-        v-for="(prediction, queueID) in predictionsArray"
-        :key="queueID"
-        :queueID="queueID"
-        :prediction="prediction"
+        v-for="item in predictionsArray"
+        :key="item.queueID"
+        :queueID="item.queueID"
+        :prediction="item.prediction"
         @get-forecast="handleGetForecast"
       />
     </div>
@@ -81,10 +81,12 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { usePredictionStore } from '../stores/predictionStore'
+import { useQueueStore } from '../stores/queueStore'
 import PredictionCard from '../components/PredictionCard.vue'
 import RunPredictionModal from '../components/RunPredictionModal.vue'
 
 const predictionStore = usePredictionStore()
+const queueStore = useQueueStore()
 
 const showRunPredictionModal = ref(false)
 
@@ -93,10 +95,14 @@ const predictions = computed(() => {
 })
 
 const predictionsArray = computed(() => {
-  return Array.from(predictions.value.entries()).map(([queueID, prediction]) => ({
-    queueID,
-    prediction
-  }))
+  // Only show predictions for queues that exist
+  const existingQueues = queueStore.queues.map(q => q.queueID)
+  return Array.from(predictions.value.entries())
+    .filter(([queueID]) => existingQueues.includes(queueID))
+    .map(([queueID, prediction]) => ({
+      queueID,
+      prediction
+    }))
 })
 
 const handlePredictionRun = (queueID, prediction) => {
@@ -123,26 +129,7 @@ const cleanOldReports = async () => {
 }
 
 onMounted(() => {
-  // In a real app, you'd load existing predictions from the API
-  // For now, we'll use mock data
-  const mockPredictions = new Map()
-  mockPredictions.set('concert-hall-1', {
-    queueID: 'concert-hall-1',
-    estWaitTime: 15,
-    entryProbability: 0.85,
-    confidenceInterval: [10, 20],
-    lastRun: new Date().toISOString()
-  })
-  
-  mockPredictions.set('restaurant-1', {
-    queueID: 'restaurant-1',
-    estWaitTime: 30,
-    entryProbability: 0.65,
-    confidenceInterval: [25, 35],
-    lastRun: new Date(Date.now() - 300000).toISOString()
-  })
-  
-  // Update the store's predictions
-  predictionStore.predictions = mockPredictions
+  // Load queues first to ensure consistency
+  queueStore.loadQueues()
 })
 </script>

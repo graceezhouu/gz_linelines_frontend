@@ -99,14 +99,27 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useReportStore } from '../stores/reportStore'
+import { useQueueStore } from '../stores/queueStore'
+
+const props = defineProps({
+  prePopulatedQueue: {
+    type: String,
+    default: ''
+  }
+})
+
 const reportStore = useReportStore()
+const queueStore = useQueueStore()
 
 const loading = ref(false)
 const error = ref('')
 
-const availableQueues = ref(['concert-hall-1', 'restaurant-1', 'museum-tour-1'])
+// Get available queues from the queue store
+const availableQueues = computed(() => {
+  return queueStore.queues.map(queue => queue.queueID)
+})
 
 const form = reactive({
   user: '',
@@ -117,6 +130,13 @@ const form = reactive({
 })
 
 const emit = defineEmits(['close', 'submitted'])
+
+// Pre-populate the queue if provided
+onMounted(() => {
+  if (props.prePopulatedQueue) {
+    form.queue = props.prePopulatedQueue
+  }
+})
 
 const handleSubmit = async () => {
   loading.value = true

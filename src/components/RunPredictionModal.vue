@@ -16,14 +16,21 @@
         <!-- Form -->
         <form @submit.prevent="handleSubmit" class="space-y-4">
           <div>
-            <label class="label">Queue ID</label>
-            <input
+            <label class="label">Select Queue</label>
+            <select
               v-model="form.queueID"
-              type="text"
               required
               class="input-field"
-              placeholder="e.g., concert-hall-1"
-            />
+            >
+              <option value="">Select a queue...</option>
+              <option
+                v-for="queue in queueStore.queues"
+                :key="queue.queueID"
+                :value="queue.queueID"
+              >
+                {{ queue.queueID }} - {{ typeof queue.location === 'string' ? queue.location : 'Coordinates' }}
+              </option>
+            </select>
           </div>
 
           <div>
@@ -67,7 +74,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { usePredictionStore } from '../stores/predictionStore'
+import { useQueueStore } from '../stores/queueStore'
+
 const predictionStore = usePredictionStore()
+const queueStore = useQueueStore()
 
 const loading = ref(false)
 const error = ref('')

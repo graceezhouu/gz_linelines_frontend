@@ -19,7 +19,7 @@ export const useReportStore = defineStore('report', {
           _id: response.report,
           ...reportData,
           timestamp: new Date().toISOString(),
-          validated: false
+          validated: null // Initially unvalidated
         })
         return response
       } catch (error) {
@@ -40,6 +40,8 @@ export const useReportStore = defineStore('report', {
         if (report) {
           report.validated = isValid
         }
+        // Also refresh the reports to ensure consistency
+        await this.loadAllReports()
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to update validation status'
         throw error

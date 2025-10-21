@@ -101,11 +101,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useCheckInStore } from '../stores/checkinStore'
+import { useQueueStore } from '../stores/queueStore'
 import ReservationCard from '../components/ReservationCard.vue'
 import ReserveSpotModal from '../components/ReserveSpotModal.vue'
 import ViewReservationModal from '../components/ViewReservationModal.vue'
 
 const checkinStore = useCheckInStore()
+const queueStore = useQueueStore()
 
 const showReserveModal = ref(false)
 const showViewModal = ref(false)
@@ -140,18 +142,7 @@ const loadUserReservations = () => {
 }
 
 onMounted(() => {
-  // In a real app, you'd load user reservations from the API
-  // For now, we'll use mock data
-  checkinStore.reservations.set('user123', {
-    _id: 'reservation-1',
-    queueID: 'concert-hall-1',
-    userID: 'user123',
-    checkInTime: new Date().toISOString(),
-    arrivalWindow: [
-      new Date().toISOString(),
-      new Date(Date.now() + 15 * 60 * 1000).toISOString()
-    ],
-    status: 'active'
-  })
+  // Load queues to ensure consistency
+  queueStore.loadQueues()
 })
 </script>

@@ -64,15 +64,15 @@ export const useQueueStore = defineStore('queue', {
     },
 
     async loadQueues() {
-      // This would typically load from a list endpoint
-      // For now, we'll manage queues locally
       this.loading = true
+      this.error = null
       try {
-        // In a real app, you'd have an endpoint to list all queues
-        // For now, we'll just clear the error
-        this.error = null
+        const response = await queueStatusAPI.getAllQueues()
+        // Sort by lastUpdated (most recent first)
+        this.queues = response.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to load queues'
+        console.error('Error loading queues:', error)
       } finally {
         this.loading = false
       }

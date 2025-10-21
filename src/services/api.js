@@ -46,6 +46,11 @@ export const queueStatusAPI = {
   viewStatus: async (queueID) => {
     const response = await api.post('/api/QueueStatus/_viewStatus', { queueID })
     return response.data
+  },
+
+  getAllQueues: async () => {
+    const response = await api.post('/api/QueueStatus/_getAllQueues', {})
+    return response.data
   }
 }
 

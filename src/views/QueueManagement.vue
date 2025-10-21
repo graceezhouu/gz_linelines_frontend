@@ -35,7 +35,7 @@
     <!-- Queues List -->
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       <QueueCard
-        v-for="queue in queues"
+        v-for="queue in queueStore.queues"
         :key="queue.queueID"
         :queue="queue"
         @update-status="handleUpdateStatus"
@@ -44,7 +44,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="queues.length === 0 && !queueStore.loading" class="text-center py-12">
+    <div v-if="queueStore.queues.length === 0 && !queueStore.loading" class="text-center py-12">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
       <h3 class="text-lg font-medium text-gray-900 mb-2">No queues yet</h3>
       <p class="text-gray-600 mb-6">Create your first queue to get started</p>
@@ -94,16 +94,16 @@ import ViewStatusModal from '../components/ViewStatusModal.vue'
 
 const queueStore = useQueueStore()
 
-const queues = ref([])
 const showCreateModal = ref(false)
 const showUpdateModal = ref(false)
 const showViewModal = ref(false)
 const selectedQueue = ref(null)
 const queueStatus = ref(null)
 
-const handleQueueCreated = (newQueue) => {
-  queues.value.push(newQueue)
+const handleQueueCreated = async (newQueue) => {
   showCreateModal.value = false
+  // Reload queues to show the new queue
+  await queueStore.loadQueues()
 }
 
 const handleUpdateStatus = (queue) => {
@@ -111,12 +111,10 @@ const handleUpdateStatus = (queue) => {
   showUpdateModal.value = true
 }
 
-const handleStatusUpdated = (updatedQueue) => {
-  const index = queues.value.findIndex(q => q.queueID === updatedQueue.queueID)
-  if (index !== -1) {
-    queues.value[index] = { ...queues.value[index], ...updatedQueue }
-  }
+const handleStatusUpdated = async (updatedQueue) => {
   showUpdateModal.value = false
+  // Reload queues to show updated status
+  await queueStore.loadQueues()
 }
 
 const handleViewStatus = async (queue) => {
@@ -129,26 +127,7 @@ const handleViewStatus = async (queue) => {
   }
 }
 
-onMounted(() => {
-  // In a real app, you'd load queues from the API
-  // For now, we'll use mock data
-  queues.value = [
-    {
-      queueID: 'concert-hall-1',
-      location: { latitude: 40.7128, longitude: -74.0060 },
-      estWaitTime: 15,
-      estPplInLine: 25,
-      virtualCheckInEligible: true,
-      lastUpdated: new Date().toISOString()
-    },
-    {
-      queueID: 'restaurant-1',
-      location: 'Downtown Restaurant',
-      estWaitTime: 30,
-      estPplInLine: 12,
-      virtualCheckInEligible: false,
-      lastUpdated: new Date(Date.now() - 300000).toISOString()
-    }
-  ]
+onMounted(async () => {
+  await queueStore.loadQueues()
 })
 </script>

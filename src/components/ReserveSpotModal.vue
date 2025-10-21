@@ -27,11 +27,11 @@
           </div>
 
           <div>
-            <label class="label">Queue ID</label>
-            <select v-model="form.queueID" class="input-field">
+            <label class="label">Queue</label>
+            <select v-model="form.queueID" required class="input-field">
               <option value="">Select a queue</option>
-              <option v-for="queue in availableQueues" :key="queue" :value="queue">
-                {{ queue }}
+              <option v-for="queue in queueStore.queues.filter(q => q.virtualCheckInEligible)" :key="queue.queueID" :value="queue.queueID">
+                {{ queue.queueID }} - {{ typeof queue.location === 'string' ? queue.location : 'Coordinates' }}
               </option>
             </select>
           </div>
@@ -82,7 +82,10 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useCheckInStore } from '../stores/checkinStore'
+import { useQueueStore } from '../stores/queueStore'
+
 const checkinStore = useCheckInStore()
+const queueStore = useQueueStore()
 
 const props = defineProps({
   userId: {
@@ -95,8 +98,6 @@ const emit = defineEmits(['close', 'reserved'])
 
 const loading = ref(false)
 const error = ref('')
-
-const availableQueues = ref(['concert-hall-1', 'restaurant-1', 'museum-tour-1'])
 
 const form = reactive({
   userID: '',

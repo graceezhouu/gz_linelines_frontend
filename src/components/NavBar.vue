@@ -19,7 +19,7 @@
             :key="item.name"
             :to="item.path"
             class="text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            :class="{ 'text-primary-600 bg-primary-50': $route.name === item.name }"
+            :class="{ 'text-primary-600 bg-primary-50': $route.name === item.routeName }"
           >
             {{ item.name }}
           </router-link>
@@ -60,7 +60,7 @@
             :to="item.path"
             @click="closeMobileMenu"
             class="text-gray-600 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            :class="{ 'text-primary-600 bg-primary-50': $route.name === item.name }"
+            :class="{ 'text-primary-600 bg-primary-50': $route.name === item.routeName }"
           >
             {{ item.name }}
           </router-link>
@@ -76,11 +76,11 @@ import { ref } from 'vue'
 const mobileMenuOpen = ref(false)
 
 const navigationItems = [
-  { name: 'Dashboard', path: '/' },
-  { name: 'Queues', path: '/queues' },
-  { name: 'Predictions', path: '/predictions' },
-  { name: 'Reports', path: '/reports' },
-  { name: 'Check-in', path: '/checkin' }
+  { name: 'Dashboard', path: '/', routeName: 'Dashboard' },
+  { name: 'Queues', path: '/queues', routeName: 'QueueManagement' },
+  { name: 'Predictions', path: '/predictions', routeName: 'Predictions' },
+  { name: 'Reports', path: '/reports', routeName: 'UserReports' },
+  { name: 'Check-in', path: '/checkin', routeName: 'VirtualCheckIn' }
 ]
 
 const toggleMobileMenu = () => {

@@ -115,15 +115,8 @@ const handleSubmit = async () => {
       form.estWaitTime
     )
     
-    // Return updated queue data
-    const updatedQueue = {
-      ...props.queue,
-      estWaitTime: form.estWaitTime,
-      estPplInLine: form.estPplInLine,
-      lastUpdated: new Date().toISOString()
-    }
-
-    emit('updated', updatedQueue)
+    // Emit the close event - the parent will handle refreshing
+    emit('updated')
   } catch (err) {
     error.value = err.message || 'Failed to update queue status'
   } finally {

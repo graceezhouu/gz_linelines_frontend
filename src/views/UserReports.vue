@@ -69,7 +69,8 @@
         :key="report._id"
         :report="report"
         @validate="handleValidate"
-        @view="handleViewReport"
+        @view-status="handleViewStatus"
+        @update="handleUpdate"
       />
     </div>
 
@@ -92,8 +93,16 @@
     <!-- Submit Report Modal -->
     <SubmitReportModal
       v-if="showSubmitModal"
+      :pre-populated-queue="prePopulatedQueue"
       @close="showSubmitModal = false"
       @submitted="handleReportSubmitted"
+    />
+
+    <!-- View Queue Status Modal -->
+    <ViewQueueStatusModal
+      v-if="showViewStatusModal"
+      :queue-i-d="selectedQueueForStatus"
+      @close="showViewStatusModal = false"
     />
 
     <!-- View Report Modal -->
@@ -108,22 +117,31 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useReportStore } from '../stores/reportStore'
+import { useQueueStore } from '../stores/queueStore'
 import ReportCard from '../components/ReportCard.vue'
 import SubmitReportModal from '../components/SubmitReportModal.vue'
 import ViewReportModal from '../components/ViewReportModal.vue'
+import ViewQueueStatusModal from '../components/ViewQueueStatusModal.vue'
 
 const reportStore = useReportStore()
+const queueStore = useQueueStore()
 
 const showSubmitModal = ref(false)
 const showViewModal = ref(false)
+const showViewStatusModal = ref(false)
 const selectedReport = ref(null)
+const selectedQueueForStatus = ref('')
 const selectedQueue = ref('')
 const statusFilter = ref('')
+const prePopulatedQueue = ref('')
 
-const availableQueues = ref(['concert-hall-1', 'restaurant-1', 'museum-tour-1'])
+// Get available queues from the queue store
+const availableQueues = computed(() => {
+  return queueStore.queues.map(queue => queue.queueID)
+})
 
 const filteredReports = computed(() => {
-  let reports = reportStore.reports
+  let reports = [...reportStore.reports]
 
   if (selectedQueue.value) {
     reports = reports.filter(report => report.queue === selectedQueue.value)
@@ -134,11 +152,13 @@ const filteredReports = computed(() => {
     reports = reports.filter(report => report.validated === isValid)
   }
 
-  return reports
+  // Sort reports by timestamp (most recent first)
+  return reports.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
 })
 
 const handleReportSubmitted = (report) => {
   showSubmitModal.value = false
+  prePopulatedQueue.value = '' // Clear pre-populated queue
   // Report is already added to the store
 }
 
@@ -148,6 +168,16 @@ const handleValidate = async (reportID, isValid) => {
   } catch (error) {
     console.error('Failed to validate report:', error)
   }
+}
+
+const handleViewStatus = (report) => {
+  selectedQueueForStatus.value = report.queue
+  showViewStatusModal.value = true
+}
+
+const handleUpdate = (report) => {
+  prePopulatedQueue.value = report.queue
+  showSubmitModal.value = true
 }
 
 const handleViewReport = (report) => {
@@ -163,7 +193,11 @@ const loadReports = async () => {
   }
 }
 
-onMounted(() => {
-  loadReports()
+onMounted(async () => {
+  // Load both queues and reports
+  await Promise.all([
+    queueStore.loadQueues(),
+    loadReports()
+  ])
 })
 </script>
