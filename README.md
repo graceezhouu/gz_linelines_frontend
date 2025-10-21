@@ -1,3 +1,17 @@
+# 4B Check In Submission Video (10/21/2025)
+
+Video is attached [here](https://youtu.be/vbV8pMq50wI) with narration of my User Journey, which is also written below. 
+
+# 4B Check In User Journey (10/21/2025)
+
+Welcome to my prototype for my individual project, which is an application to monitor the progress of lines and help event-goers better predict wait times and increase transparency. 
+
+This page is the dashboard, which every user is initially directed to. We are able to do a variety of actions from checking in to an organized event, asking for intelligent predictions, submitting a user report, to starting our own line. We begin with user Tom who is interested in joining the line for a restaurant event with id `restaurant-1` that does not have a virtual check in. He navigates to the Queues tab and sees that someone has already created the queue. If it was not created, he also has the option to create it himself with the Create Queue button.
+
+When he arrives at the restaurant, he notices a short line at the restaurant and navigates to the User Report section to report his findings. He filters the reports to his desired event and notices that the most report for `restaurant-1` says that there are 3000 people in line and a 300 min wait. He does not feel that this is accurate so he does not validate that report, and provides his own update instead. He can do so by directly clicking update on the existing report or clicking submit report at the top right, which will lead him to the same pop up, but he will need to select the queue manually. From here, he updates with his information and submits the report. 
+
+When we navigate back to the Queues section, this new information is immediately synced here too so all sections remain up to date. Lastly, he wants to see if AI can help him get a more accurate prediction it uses historical data to make statistical calculations, so he navigates to the predictions page to run a prediction for `restaurant-1` and is provided with another entry there containing the predicted time, confidence interval and predicted entry probability. 
+
 # LineLens Frontend
 
 A modern Vue.js frontend application for the LineLens queue management and prediction system.
