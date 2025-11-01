@@ -1,17 +1,17 @@
 <template>
-  <div class="bg-white rounded-lg p-6 border border-gray-200">
-    <div class="flex items-center">
+  <div class="stat-card">
+    <div class="flex flex-col items-center space-y-4">
       <div class="flex-shrink-0">
         <div
-          class="w-8 h-8 rounded-lg flex items-center justify-center"
+          class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-bubble transform hover:rotate-12 transition-all duration-300"
           :class="iconColorClasses"
         >
-          <span class="text-xl">{{ getIconEmoji(props.icon) }}</span>
+          <span class="text-3xl">{{ getIconEmoji(props.icon) }}</span>
         </div>
       </div>
-      <div class="ml-4">
-        <p class="text-sm font-medium text-gray-500">{{ title }}</p>
-        <p class="text-2xl font-semibold text-gray-900">{{ value }}</p>
+      <div class="text-center">
+        <p class="text-lg font-bold text-gray-600 mb-2">{{ title }}</p>
+        <p class="text-4xl font-heading font-bold text-accent-blue-800">{{ value }}</p>
       </div>
     </div>
   </div>
@@ -51,11 +51,11 @@ const getIconEmoji = (icon) => {
 
 const iconColorClasses = computed(() => {
   const colorMap = {
-    blue: 'bg-blue-100 text-blue-600',
-    green: 'bg-green-100 text-green-600',
-    purple: 'bg-purple-100 text-purple-600',
-    orange: 'bg-orange-100 text-orange-600'
+    blue: 'bg-gradient-to-br from-accent-blue-400 to-accent-blue-600 text-white',
+    green: 'bg-gradient-to-br from-accent-green-400 to-accent-green-600 text-white',
+    purple: 'bg-gradient-to-br from-purple-400 to-purple-600 text-white',
+    orange: 'bg-gradient-to-br from-orange-400 to-orange-600 text-white'
   }
-  return colorMap[props.color] || 'bg-gray-100 text-gray-600'
+  return colorMap[props.color] || 'bg-gradient-to-br from-gray-400 to-gray-600 text-white'
 })
 </script>

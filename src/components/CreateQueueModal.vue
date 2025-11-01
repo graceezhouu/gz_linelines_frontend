@@ -1,15 +1,15 @@
 <template>
-  <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+  <div class="fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full z-50 backdrop-blur-sm">
+    <div class="relative top-20 mx-auto p-8 border-2 border-accent-blue-200 w-[600px] shadow-bubble rounded-3xl bg-gradient-to-br from-white to-gray-50">
       <div class="mt-3">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-medium text-gray-900">Create New Queue</h3>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="heading-medium">Create New Queue 🎯</h3>
           <button
             @click="$emit('close')"
-            class="text-gray-400 hover:text-gray-600"
+            class="text-gray-500 hover:text-accent-red-600 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200 transform hover:scale-110"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
 
@@ -95,38 +95,38 @@
             </div>
           </div>
 
-          <div class="flex items-center">
+          <div class="flex items-center p-4 bg-gradient-to-r from-accent-blue-50 to-accent-green-50 rounded-2xl border-2 border-accent-blue-200">
             <input
               v-model="form.virtualCheckInEligible"
               type="checkbox"
-              class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              class="h-5 w-5 text-accent-blue-600 focus:ring-accent-blue-500 border-gray-400 rounded-lg transform scale-125"
             />
-            <label class="ml-2 block text-sm text-gray-900">
-              Enable Virtual Check-in
+            <label class="ml-3 block text-lg font-bold text-gray-800">
+              Enable Virtual Check-in ✨
             </label>
           </div>
 
           <!-- Error Message -->
-          <div v-if="error" class="text-red-600 text-sm">
-            {{ error }}
+          <div v-if="error" class="p-4 bg-gradient-to-r from-accent-red-100 to-accent-red-50 border-2 border-accent-red-300 rounded-2xl">
+            <p class="text-accent-red-800 text-lg font-bold">⚠️ {{ error }}</p>
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end space-x-3 pt-4">
+          <div class="flex justify-end space-x-4 pt-6">
             <button
               type="button"
               @click="$emit('close')"
               class="btn-secondary"
             >
-              Cancel
+              Cancel ❌
             </button>
             <button
               type="submit"
               :disabled="loading"
               class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span v-if="loading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
-              {{ loading ? 'Creating...' : 'Create Queue' }}
+              <span v-if="loading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span>
+              {{ loading ? 'Creating... ⏳' : 'Create Queue 🚀' }}
             </button>
           </div>
         </form>

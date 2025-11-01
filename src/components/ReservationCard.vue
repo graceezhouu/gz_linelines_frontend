@@ -28,7 +28,7 @@
       <div class="text-center p-4 bg-green-50 rounded-lg">
         <p class="text-sm text-green-600 font-medium">Arrival Window</p>
         <p class="text-sm font-semibold text-green-900">
-          {{ formatTime(reservation.arrivalWindow[0]) }} - {{ formatTime(reservation.arrivalWindow[1]) }}
+          {{ reservation.arrivalWindow ? `${formatTime(reservation.arrivalWindow[0])} - ${formatTime(reservation.arrivalWindow[1])}` : 'Unknown' }}
         </p>
       </div>
 
@@ -99,7 +99,7 @@ const formatTime = (timestamp) => {
 }
 
 const getTimeRemaining = () => {
-  if (props.reservation.status !== 'active') return 'N/A'
+  if (props.reservation.status !== 'active' || !props.reservation.arrivalWindow) return 'N/A'
   
   const now = new Date()
   const endTime = new Date(props.reservation.arrivalWindow[1])

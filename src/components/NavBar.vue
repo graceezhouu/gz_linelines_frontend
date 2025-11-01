@@ -1,25 +1,25 @@
 <template>
-  <nav class="bg-white shadow-lg border-b border-gray-200">
+  <nav class="bg-gradient-to-r from-white via-gray-50 to-white shadow-bubble border-b-4 border-accent-blue-200">
     <div class="container mx-auto px-4">
-      <div class="flex justify-between items-center h-16">
+      <div class="flex justify-between items-center h-20">
         <!-- Logo and Brand -->
         <div class="flex items-center space-x-4">
-          <router-link to="/" class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-lg">L</span>
+          <router-link to="/" class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-gradient-to-r from-accent-blue-600 to-accent-green-600 rounded-2xl flex items-center justify-center shadow-bubble transform hover:scale-110 transition-all duration-300">
+              <span class="text-white font-bold text-2xl font-heading">L</span>
             </div>
-            <span class="text-xl font-bold text-gray-800">LineLens</span>
+            <span class="text-3xl font-heading font-bold bg-gradient-to-r from-accent-blue-600 to-accent-green-600 bg-clip-text text-transparent">LineLens</span>
           </router-link>
         </div>
 
         <!-- Navigation Links -->
-        <div class="hidden md:flex items-center space-x-8">
+        <div class="hidden md:flex items-center space-x-2">
           <router-link
             v-for="item in navigationItems"
             :key="item.name"
             :to="item.path"
-            class="text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-            :class="{ 'text-primary-600 bg-primary-50': $route.name === item.routeName }"
+            class="nav-link"
+            :class="{ 'nav-link-active': $route.name === item.routeName }"
           >
             {{ item.name }}
           </router-link>
@@ -53,14 +53,14 @@
 
       <!-- Mobile menu -->
       <div v-if="mobileMenuOpen" class="md:hidden">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
+        <div class="px-4 pt-4 pb-6 space-y-2 sm:px-6 border-t-2 border-accent-blue-200 bg-gradient-to-b from-white to-gray-50">
           <router-link
             v-for="item in navigationItems"
             :key="item.name"
             :to="item.path"
             @click="closeMobileMenu"
-            class="text-gray-600 hover:text-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            :class="{ 'text-primary-600 bg-primary-50': $route.name === item.routeName }"
+            class="nav-link block w-full text-center"
+            :class="{ 'nav-link-active': $route.name === item.routeName }"
           >
             {{ item.name }}
           </router-link>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Testing LineLens API Connection</h1>
+    <button onclick="testConnection()">Test API Connection</button>
+    <div id="result"></div>
+
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            try {
+                // Test 1: Basic server connection
+                const basicResponse = await fetch('http://localhost:8000/');
+                const basicText = await basicResponse.text();
+                console.log('Basic connection:', basicText);
+
+                // Test 2: Get all queues
+                const queuesResponse = await fetch('http://localhost:8000/api/QueueStatus/_getAllQueues', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const queuesData = await queuesResponse.json();
+                console.log('Queues data:', queuesData);
+                
+                resultDiv.innerHTML = `
+                    <h2>✅ API Connection Successful!</h2>
+                    <p><strong>Basic Response:</strong> ${basicText}</p>
+                    <p><strong>Queues:</strong> ${JSON.stringify(queuesData, null, 2)}</p>
+                `;
+            } catch (error) {
+                console.error('API Error:', error);
+                resultDiv.innerHTML = `
+                    <h2>❌ API Connection Failed</h2>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

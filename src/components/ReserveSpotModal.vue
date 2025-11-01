@@ -1,15 +1,15 @@
 <template>
-  <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+  <div class="fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full z-50 backdrop-blur-sm">
+    <div class="relative top-20 mx-auto p-8 border-2 border-accent-blue-200 w-[600px] shadow-bubble rounded-3xl bg-gradient-to-br from-white to-gray-50">
       <div class="mt-3">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-medium text-gray-900">Reserve Spot</h3>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="heading-medium">Reserve Spot 🎯</h3>
           <button
             @click="$emit('close')"
-            class="text-gray-400 hover:text-gray-600"
+            class="text-gray-500 hover:text-accent-red-600 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200 transform hover:scale-110"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
 
@@ -37,40 +37,40 @@
           </div>
 
           <!-- Information Box -->
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="bg-gradient-to-r from-accent-blue-50 to-accent-blue-100 border-2 border-accent-blue-300 rounded-2xl p-6">
             <div class="flex">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-blue-800">Important</h3>
-                <p class="text-sm text-blue-700 mt-1">
+              <svg class="w-6 h-6 text-accent-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div class="ml-4">
+                <h3 class="text-lg font-bold text-accent-blue-800">⚠️ Important Information</h3>
+                <p class="text-lg font-semibold text-accent-blue-700 mt-2">
                   You have 15 minutes to arrive after reserving your spot. 
-                  Your reservation will expire if you don't arrive within this window.
+                  Your reservation will expire if you don't arrive within this window. ⏰
                 </p>
               </div>
             </div>
           </div>
 
           <!-- Error Message -->
-          <div v-if="error" class="text-red-600 text-sm">
-            {{ error }}
+          <div v-if="error" class="p-4 bg-gradient-to-r from-accent-red-100 to-accent-red-50 border-2 border-accent-red-300 rounded-2xl">
+            <p class="text-accent-red-800 text-lg font-bold">⚠️ {{ error }}</p>
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end space-x-3 pt-4">
+          <div class="flex justify-end space-x-4 pt-6">
             <button
               type="button"
               @click="$emit('close')"
               class="btn-secondary"
             >
-              Cancel
+              Cancel ❌
             </button>
             <button
               type="submit"
               :disabled="loading"
               class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span v-if="loading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
-              {{ loading ? 'Reserving...' : 'Reserve Spot' }}
+              <span v-if="loading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span>
+              {{ loading ? 'Reserving... ⏳' : 'Reserve Spot 🎯' }}
             </button>
           </div>
         </form>
@@ -114,8 +114,16 @@ const handleSubmit = async () => {
 
   try {
     const response = await checkinStore.reserveSpot(form.userID, form.queueID)
-    emit('reserved', form.userID, response)
+    
+    // Get the complete reservation object from the store
+    const reservation = checkinStore.getReservationForUser(form.userID)
+    
+    // Emit reserved event and close modal
+    emit('reserved', form.userID, reservation)
+    emit('close')
+    
   } catch (err) {
+    console.error('Reservation failed:', err)
     error.value = err.message || 'Failed to reserve spot'
   } finally {
     loading.value = false
