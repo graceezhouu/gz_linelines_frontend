@@ -22,7 +22,7 @@
               type="text"
               required
               class="input-field"
-              :placeholder="userId || 'e.g., user123'"
+              placeholder="Enter your user ID"
             />
           </div>
 
@@ -113,10 +113,13 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    const response = await checkinStore.reserveSpot(form.userID, form.queueID)
+    // Find the selected queue info for wait time calculation
+    const selectedQueue = queueStore.queues.find(q => q.queueID === form.queueID)
     
-    // Get the complete reservation object from the store
-    const reservation = checkinStore.getReservationForUser(form.userID)
+    const response = await checkinStore.reserveSpot(form.userID, form.queueID, selectedQueue)
+    
+    // Use the reservation object returned from the store
+    const reservation = response.reservation || checkinStore.getReservationForUser(form.userID)
     
     // Emit reserved event and close modal
     emit('reserved', form.userID, reservation)

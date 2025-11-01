@@ -3,30 +3,40 @@ import { virtualCheckInAPI } from '../services/api'
 
 export const useCheckInStore = defineStore('checkin', {
   state: () => ({
-    reservations: new Map(), // userID -> reservation data
+    reservations: {}, // userID -> reservation data
     loading: false,
     error: null
   }),
 
   actions: {
-    async reserveSpot(userID, queueID) {
+    async reserveSpot(userID, queueID, queueInfo = null) {
       this.loading = true
       this.error = null
       try {
         const response = await virtualCheckInAPI.reserveSpot(userID, queueID)
+        // Calculate check-in time based on queue wait time
+        const now = new Date()
+        const waitTimeMinutes = queueInfo?.estWaitTime || 15 // Default to 15 minutes if no queue info
+        const checkInTime = new Date(now.getTime() + waitTimeMinutes * 60 * 1000)
+        
+        // Arrival window is check-in time ± 5 minutes
+        const arrivalStart = new Date(checkInTime.getTime() - 5 * 60 * 1000)
+        const arrivalEnd = new Date(checkInTime.getTime() + 5 * 60 * 1000)
+        
         const reservation = {
-          _id: response.reservationID,
+          _id: response.reservationID || `temp-${Date.now()}`,
           queueID,
           userID,
-          checkInTime: new Date().toISOString(),
+          reservationTime: now.toISOString(), // When the reservation was made
+          checkInTime: checkInTime.toISOString(), // When they should arrive
           arrivalWindow: [
-            new Date().toISOString(),
-            new Date(Date.now() + 15 * 60 * 1000).toISOString() // 15 minutes from now
+            arrivalStart.toISOString(),
+            arrivalEnd.toISOString()
           ],
           status: 'active'
         }
-        this.reservations.set(userID, reservation)
-        return response
+        this.reservations[userID] = reservation
+        return { ...response, reservation }
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to reserve spot'
         throw error
@@ -41,9 +51,9 @@ export const useCheckInStore = defineStore('checkin', {
       try {
         await virtualCheckInAPI.cancelSpot(reservationID)
         // Update local state
-        for (const [userID, reservation] of this.reservations.entries()) {
-          if (reservation._id === reservationID) {
-            reservation.status = 'cancelled'
+        for (const userID in this.reservations) {
+          if (this.reservations[userID]._id === reservationID) {
+            this.reservations[userID].status = 'cancelled'
             break
           }
         }
@@ -61,7 +71,8 @@ export const useCheckInStore = defineStore('checkin', {
       try {
         await virtualCheckInAPI.expireReservations()
         // Update local state - mark expired reservations
-        for (const [userID, reservation] of this.reservations.entries()) {
+        for (const userID in this.reservations) {
+          const reservation = this.reservations[userID]
           const arrivalWindowEnd = new Date(reservation.arrivalWindow[1])
           if (reservation.status === 'active' && new Date() > arrivalWindowEnd) {
             reservation.status = 'expired'
@@ -104,7 +115,7 @@ export const useCheckInStore = defineStore('checkin', {
     },
 
     getReservationForUser(userID) {
-      return this.reservations.get(userID) || null
+      return this.reservations[userID] || null
     },
 
     clearError() {

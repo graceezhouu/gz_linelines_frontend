@@ -18,7 +18,7 @@
     <div class="space-y-4">
       <!-- Check-in Time -->
       <div class="text-center p-4 bg-blue-50 rounded-lg">
-        <p class="text-sm text-blue-600 font-medium">Check-in Time</p>
+        <p class="text-sm text-blue-600 font-medium">Expected Check-in Time</p>
         <p class="text-lg font-bold text-blue-900">
           {{ formatTime(reservation.checkInTime) }}
         </p>
@@ -34,7 +34,7 @@
 
       <!-- Time Remaining -->
       <div v-if="reservation.status === 'active'" class="text-center p-4 bg-orange-50 rounded-lg">
-        <p class="text-sm text-orange-600 font-medium">Time Remaining</p>
+        <p class="text-sm text-orange-600 font-medium">Time Until Check-in</p>
         <p class="text-lg font-bold text-orange-900">
           {{ getTimeRemaining() }}
         </p>
@@ -43,19 +43,12 @@
 
     <div class="flex space-x-2 mt-6">
       <button
-        @click="$emit('view', reservation)"
-        class="flex-1 btn-secondary text-sm"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-        View
-      </button>
-      <button
         v-if="reservation.status === 'active'"
         @click="$emit('cancel', reservation._id)"
-        class="flex-1 btn-danger text-sm"
+        class="w-full btn-danger text-sm"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-        Cancel
+        Cancel Reservation
       </button>
     </div>
   </div>
@@ -70,7 +63,9 @@ const props = defineProps({
   }
 })
 
-defineEmits(['cancel', 'view'])
+defineEmits(['cancel'])
+
+
 
 const statusClasses = computed(() => {
   const statusMap = {
@@ -99,13 +94,13 @@ const formatTime = (timestamp) => {
 }
 
 const getTimeRemaining = () => {
-  if (props.reservation.status !== 'active' || !props.reservation.arrivalWindow) return 'N/A'
+  if (props.reservation.status !== 'active' || !props.reservation.checkInTime) return 'N/A'
   
   const now = new Date()
-  const endTime = new Date(props.reservation.arrivalWindow[1])
-  const diffMs = endTime - now
+  const checkInTime = new Date(props.reservation.checkInTime)
+  const diffMs = checkInTime - now
   
-  if (diffMs <= 0) return 'Expired'
+  if (diffMs <= 0) return 'Time to check in!'
   
   const diffMins = Math.floor(diffMs / 60000)
   if (diffMins < 60) return `${diffMins}m`

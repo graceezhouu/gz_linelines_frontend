@@ -1,4 +1,13 @@
 # 4B Final Submission Video (10/28/2025 + 3 slack) 
+Video is attached [here](https://youtu.be/Pmil7Opc_gk) with narration of my User Journey, which is also written below. 
+
+Welcome to my final submission and demonstration for assignment 4b for my project Linelens, which is a line monitoring tool for event goers. Since the checkin, I have made some major stylistic changes to make the application more visually appealing, usable, and extended the features, so today’s new user journey will be focused on the Virtual Check in component. 
+
+We begin with User 1 (Sam) who wants to host an event for a beauty brand he’s working with to pass out a samples and allow people to try it. So he goes into the Queues tab, which he can access from the top here or right here and starts a queue. **He enables virtual check in because it is a cold day and he doesn’t want participants to be waiting for a long time out in the cold.**
+
+User 2 (Amanda), is interested in attending and wants to reserve a spot. This also allows her to know when she needs to leave her house. She enters her username and selects the queue of interest and submits the form. She lives very close to the event so she plans to leave when there’s 5 minutes left on the countdown. Notice she also has the option to cancel the check in if she no longer plans to go, but she won’t do that in this example. 
+
+The last user journey demonstrated the Reports and Predictions feature and this journey focused on **Check-in** which targets events that specifically allow for this feature. 
 
 # 4B Final Visual Design Study (10/28/2025 + 3 slack) 
 Link to full Visual Design Study slides [here](https://docs.google.com/presentation/d/1zV5XiA8NUZLHCoqC07dM17Uk87HDKyaAUvbePXb58yo/edit?usp=sharing) or view below. 

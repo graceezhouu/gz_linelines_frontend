@@ -57,27 +57,7 @@
       </div>
     </div>
 
-    <!-- User Input -->
-    <div class="card">
-      <h2 class="heading-medium mb-6">Your Information 👤</h2>
-      <div class="flex items-center space-x-6">
-        <div class="flex-1">
-          <label class="label">User ID 🆔</label>
-          <input
-            v-model="currentUserID"
-            type="text"
-            class="input-field"
-            placeholder="Enter your user ID"
-          />
-        </div>
-        <button
-          @click="loadUserReservations"
-          class="btn-secondary"
-        >
-          Load My Reservations 📋
-        </button>
-      </div>
-    </div>
+
 
     <!-- Reservations List -->
     <div class="space-y-4">
@@ -86,7 +66,6 @@
         :key="reservation._id"
         :reservation="reservation"
         @cancel="handleCancelReservation"
-        @view="handleViewReservation"
       />
     </div>
 
@@ -116,12 +95,7 @@
       @reserved="handleReservationCreated"
     />
 
-    <!-- View Reservation Modal -->
-    <ViewReservationModal
-      v-if="showViewModal"
-      :reservation="selectedReservation"
-      @close="showViewModal = false"
-    />
+
   </div>
 </template>
 
@@ -131,15 +105,12 @@ import { useCheckInStore } from '../stores/checkinStore'
 import { useQueueStore } from '../stores/queueStore'
 import ReservationCard from '../components/ReservationCard.vue'
 import ReserveSpotModal from '../components/ReserveSpotModal.vue'
-import ViewReservationModal from '../components/ViewReservationModal.vue'
 
 const checkinStore = useCheckInStore()
 const queueStore = useQueueStore()
 
 const showReserveModal = ref(false)
-const showViewModal = ref(false)
-const selectedReservation = ref(null)
-const currentUserID = ref('user123')
+const currentUserID = ref('')
 const successMessage = ref('')
 const timeRemaining = ref('')
 const countdownInterval = ref(null)
@@ -160,18 +131,15 @@ const updateCountdown = () => {
   }
 
   const now = new Date()
-  const expiryTime = new Date(activeReservation.value.arrivalWindow[1])
-  const timeDiff = expiryTime - now
+  const checkInTime = new Date(activeReservation.value.checkInTime)
+  const timeDiff = checkInTime - now
 
   if (timeDiff <= 0) {
-    timeRemaining.value = 'EXPIRED'
+    timeRemaining.value = 'TIME TO CHECK IN!'
     if (countdownInterval.value) {
       clearInterval(countdownInterval.value)
       countdownInterval.value = null
     }
-    // Mark reservation as expired in the store
-    activeReservation.value.status = 'expired'
-    successMessage.value = ''
     return
   }
 
@@ -193,12 +161,24 @@ const handleModalClose = () => {
   showReserveModal.value = false
 }
 
+const formatTime = (timestamp) => {
+  if (!timestamp) return 'Unknown'
+  const date = new Date(timestamp)
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
 const handleReservationCreated = (userID, reservation) => {
+  
   // Find the queue info for the success message
   const queue = queueStore.queues.find(q => q.queueID === reservation.queueID)
   const queueName = queue ? queue.queueID : reservation.queueID
   
-  successMessage.value = `Successfully reserved spot in queue "${queueName}"! You have 15 minutes to arrive.`
+  // Calculate wait time from now to check-in time
+  const now = new Date()
+  const checkInTime = new Date(reservation.checkInTime)
+  const waitMinutes = Math.ceil((checkInTime - now) / 60000)
+  
+  successMessage.value = `Successfully reserved spot in queue "${queueName}"! Check in at ${formatTime(reservation.checkInTime)} (in ${waitMinutes} minutes).`
   
   // Start the countdown timer
   startCountdown()
@@ -219,11 +199,6 @@ const handleCancelReservation = async (reservationID) => {
   } catch (error) {
     console.error('Failed to cancel reservation:', error)
   }
-}
-
-const handleViewReservation = (reservation) => {
-  selectedReservation.value = reservation
-  showViewModal.value = true
 }
 
 const loadUserReservations = () => {
