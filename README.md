@@ -1,3 +1,12 @@
+# 4B Final Submission Video (10/31/2025 - 3 slack days used) 
+
+# 4B Final Visual Design Study (10/31/2025 - 3 slack days used) 
+Link to Visual Design slides [here](https://docs.google.com/presentation/d/1zV5XiA8NUZLHCoqC07dM17Uk87HDKyaAUvbePXb58yo/edit?usp=sharing) or view below. 
+
+![Typography Slide](typography.png)
+-----
+![Color Slide](color.png)
+
 # 4B Check In Submission Video (10/21/2025)
 
 Video is attached [here](https://youtu.be/vbV8pMq50wI) with narration of my User Journey, which is also written below. 
