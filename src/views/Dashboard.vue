@@ -30,57 +30,12 @@
         </div>
       </div>
     </div>
-
-    <!-- Quick Stats -->
-    <div class="card">
-      <h2 class="heading-medium mb-8">System Overview 📊</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <StatCard
-          title="Active Queues"
-          :value="stats.activeQueues"
-          icon="Queue"
-          color="blue"
-        />
-        <StatCard
-          title="Predictions Today"
-          :value="stats.predictionsToday"
-          icon="TrendingUp"
-          color="green"
-        />
-        <StatCard
-          title="User Reports"
-          :value="stats.userReports"
-          icon="FileText"
-          color="purple"
-        />
-        <StatCard
-          title="Virtual Check-ins"
-          :value="stats.virtualCheckins"
-          icon="Calendar"
-          color="orange"
-        />
-      </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="card">
-      <h2 class="heading-medium mb-8">Recent Activity 🚀</h2>
-      <div class="space-y-6">
-        <ActivityItem
-          v-for="activity in recentActivity"
-          :key="activity.id"
-          :activity="activity"
-        />
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import StatCard from '../components/StatCard.vue'
-import ActivityItem from '../components/ActivityItem.vue'
 
 const router = useRouter()
 
@@ -93,13 +48,6 @@ const features = ref([
     color: 'blue'
   },
   {
-    name: 'AI Predictions',
-    description: 'Get intelligent wait time and entry predictions',
-    icon: 'Brain',
-    path: '/predictions',
-    color: 'green'
-  },
-  {
     name: 'User Reports',
     description: 'Submit and manage real-time queue reports',
     icon: 'FileText',
@@ -107,49 +55,18 @@ const features = ref([
     color: 'purple'
   },
   {
+    name: 'AI Predictions',
+    description: 'Get intelligent wait time and entry predictions',
+    icon: 'Brain',
+    path: '/predictions',
+    color: 'green'
+  },
+  {
     name: 'Virtual Check-in',
     description: 'Reserve your spot in line remotely',
     icon: 'Calendar',
     path: '/checkin',
     color: 'orange'
-  }
-])
-
-const stats = ref({
-  activeQueues: 0,
-  predictionsToday: 0,
-  userReports: 0,
-  virtualCheckins: 0
-})
-
-const recentActivity = ref([
-  {
-    id: 1,
-    type: 'queue_created',
-    message: 'New queue created for "Concert Hall Event"',
-    timestamp: '2 minutes ago',
-    icon: 'Queue'
-  },
-  {
-    id: 2,
-    type: 'prediction_run',
-    message: 'AI prediction completed for "Restaurant Queue"',
-    timestamp: '5 minutes ago',
-    icon: 'Brain'
-  },
-  {
-    id: 3,
-    type: 'report_submitted',
-    message: 'User report submitted for "Coffee Shop Line"',
-    timestamp: '8 minutes ago',
-    icon: 'FileText'
-  },
-  {
-    id: 4,
-    type: 'checkin_reserved',
-    message: 'Virtual check-in reserved for "Museum Tour"',
-    timestamp: '12 minutes ago',
-    icon: 'Calendar'
   }
 ])
 
@@ -176,15 +93,4 @@ const getIconEmoji = (icon) => {
   }
   return iconMap[icon] || '📋'
 }
-
-onMounted(() => {
-  // In a real app, you'd load actual stats from the API
-  // For now, we'll use mock data
-  stats.value = {
-    activeQueues: 12,
-    predictionsToday: 45,
-    userReports: 128,
-    virtualCheckins: 23
-  }
-})
 </script>
