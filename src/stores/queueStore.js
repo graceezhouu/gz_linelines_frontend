@@ -54,9 +54,19 @@ export const useQueueStore = defineStore('queue', {
       this.error = null
       try {
         const response = await queueStatusAPI.viewStatus(queueID)
-        return response[0] // API returns array with single item
+        console.log('getQueueStatus response:', response)
+        
+        // Handle different response formats
+        if (Array.isArray(response) && response.length > 0) {
+          return response[0]
+        } else if (response && typeof response === 'object') {
+          return response
+        } else {
+          throw new Error('Invalid queue status response format')
+        }
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to get queue status'
+        console.error('Error getting queue status:', error)
         throw error
       } finally {
         this.loading = false
@@ -68,13 +78,35 @@ export const useQueueStore = defineStore('queue', {
       this.error = null
       try {
         const response = await queueStatusAPI.getAllQueues()
-        console.log(response)
-        // Sort by lastUpdated (most recent first)
-        this.queues = response.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated)) || []
+        console.log('getAllQueues response:', response)
+        
+        // Handle different response formats
+        let queues = []
+        if (Array.isArray(response)) {
+          queues = response
+        } else if (response && Array.isArray(response.queues)) {
+          queues = response.queues
+        } else if (response && typeof response === 'object') {
+          // If response is an object, convert to array
+          queues = Object.values(response)
+        } else {
+          console.warn('Unexpected response format:', response)
+          queues = []
+        }
+        
+        // Ensure we have an array and sort by lastUpdated (most recent first)
+        this.queues = queues
+          .filter(queue => queue && typeof queue === 'object') // Filter out invalid items
+          .sort((a, b) => {
+            const aDate = new Date(a.lastUpdated || 0)
+            const bDate = new Date(b.lastUpdated || 0)
+            return bDate - aDate
+          })
         
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to load queues'
         console.error('Error loading queues:', error)
+        this.queues = [] // Ensure queues is always an array
       } finally {
         this.loading = false
       }
