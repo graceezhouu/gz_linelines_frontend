@@ -49,7 +49,6 @@
         :key="item.queueID"
         :queueID="item.queueID"
         :prediction="item.prediction"
-        @get-forecast="handleGetForecast"
       />
     </div>
 
@@ -105,14 +104,6 @@ const predictionsArray = computed(() => {
 const handlePredictionRun = (queueID, prediction) => {
   showRunPredictionModal.value = false
   // The prediction is already stored in the store
-}
-
-const handleGetForecast = async (queueID) => {
-  try {
-    await predictionStore.getForecast(queueID)
-  } catch (error) {
-    console.error('Failed to get forecast:', error)
-  }
 }
 
 const cleanOldReports = async () => {
