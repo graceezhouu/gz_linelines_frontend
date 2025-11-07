@@ -70,7 +70,7 @@ export const useQueueStore = defineStore('queue', {
         const response = await queueStatusAPI.getAllQueues()
         console.log(response)
         // Sort by lastUpdated (most recent first)
-        this.queues = response.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
+        this.queues = response.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated)) || []
         
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to load queues'
