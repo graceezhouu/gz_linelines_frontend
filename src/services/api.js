@@ -105,8 +105,8 @@ export const userReportAPI = {
 
 // VirtualCheckIn API
 export const virtualCheckInAPI = {
-  reserveSpot: async (userID, queueID) => {
-    const response = await api.post('/api/VirtualCheckIn/reserveSpot', { userID, queueID })
+  reserveSpot: async (email, queueID, organizerEmail) => {
+    const response = await api.post('/api/VirtualCheckIn/reserveSpot', { email, queueID, organizerEmail })  
     return response.data
   },
 
@@ -125,8 +125,8 @@ export const virtualCheckInAPI = {
     return response.data
   },
 
-  getUserActiveReservation: async (userID, queueID) => {
-    const response = await api.post('/api/VirtualCheckIn/_getUserActiveReservation', { userID, queueID })
+  getUserActiveReservation: async (email, queueID) => {
+    const response = await api.post('/api/VirtualCheckIn/_getUserActiveReservation', { email, queueID })
     return response.data
   }
 }

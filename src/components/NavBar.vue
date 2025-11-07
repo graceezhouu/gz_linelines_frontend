@@ -80,7 +80,7 @@ const navigationItems = [
   { name: 'Queues', path: '/queues', routeName: 'QueueManagement' },
   { name: 'Predictions', path: '/predictions', routeName: 'Predictions' },
   { name: 'Reports', path: '/reports', routeName: 'UserReports' },
-  { name: 'Check-in', path: '/checkin', routeName: 'VirtualCheckIn' }
+  { name: 'Virtual Check-in', path: '/checkin', routeName: 'VirtualCheckIn' }
 ]
 
 const toggleMobileMenu = () => {

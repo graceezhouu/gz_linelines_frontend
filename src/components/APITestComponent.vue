@@ -44,7 +44,8 @@ const testCreateQueue = async () => {
       location: 'Test Location',
       estWaitTime: 10,
       estPplInLine: 5,
-      virtualCheckInEligible: true
+      virtualCheckInEligible: true,
+      contactEmail: 'test@example.com'
     }
     const response = await queueStatusAPI.createQueue(queueData)
     result.value = JSON.stringify(response, null, 2)

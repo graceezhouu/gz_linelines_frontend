@@ -95,15 +95,29 @@
             </div>
           </div>
 
-          <div class="flex items-center p-4 bg-gradient-to-r from-accent-blue-50 to-accent-green-50 rounded-2xl border-2 border-accent-blue-200">
-            <input
-              v-model="form.virtualCheckInEligible"
-              type="checkbox"
-              class="h-5 w-5 text-accent-blue-600 focus:ring-accent-blue-500 border-gray-400 rounded-lg transform scale-125"
-            />
-            <label class="ml-3 block text-lg font-bold text-gray-800">
-              Enable Virtual Check-in ✨
-            </label>
+          <div class="p-4 bg-gradient-to-r from-accent-blue-50 to-accent-green-50 rounded-2xl border-2 border-accent-blue-200 space-y-4">
+            <div class="flex items-center">
+              <input
+                v-model="form.virtualCheckInEligible"
+                type="checkbox"
+                class="h-5 w-5 text-accent-blue-600 focus:ring-accent-blue-500 border-gray-400 rounded-lg transform scale-125"
+              />
+              <label class="ml-3 block text-lg font-bold text-gray-800">
+                Enable Virtual Check-in ✨
+              </label>
+            </div>
+            
+            <div v-if="form.virtualCheckInEligible" class="transition-all duration-300">
+              <label class="label">Contact Email (Required for Virtual Check-in)</label>
+              <input
+                v-model="form.contactEmail"
+                type="email"
+                required
+                class="input-field"
+                placeholder="e.g., organizer@example.com"
+              />
+              <p class="text-sm text-gray-600 mt-1">This email will be used for virtual check-in notifications and communication.</p>
+            </div>
           </div>
 
           <!-- Error Message -->
@@ -150,12 +164,20 @@ const form = reactive({
   locationString: '',
   estWaitTime: null,
   estPplInLine: null,
-  virtualCheckInEligible: false
+  virtualCheckInEligible: false,
+  contactEmail: ''
 })
 
 const handleSubmit = async () => {
   loading.value = true
   error.value = ''
+
+  // Validation: if virtual check-in is enabled, email is required
+  if (form.virtualCheckInEligible && !form.contactEmail.trim()) {
+    error.value = 'Contact email is required when virtual check-in is enabled'
+    loading.value = false
+    return
+  }
 
   try {
     const queueData = {
@@ -165,7 +187,8 @@ const handleSubmit = async () => {
         : form.locationString,
       estWaitTime: form.estWaitTime || null,
       estPplInLine: form.estPplInLine || null,
-      virtualCheckInEligible: form.virtualCheckInEligible
+      virtualCheckInEligible: form.virtualCheckInEligible,
+      contactEmail: form.virtualCheckInEligible ? form.contactEmail.trim() : null
     }
 
     await queueStore.createQueue(queueData)

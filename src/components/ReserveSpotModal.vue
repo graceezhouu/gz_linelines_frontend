@@ -16,14 +16,15 @@
         <!-- Form -->
         <form @submit.prevent="handleSubmit" class="space-y-4">
           <div>
-            <label class="label">User ID</label>
+            <label class="label">Email Address</label>
             <input
-              v-model="form.userID"
-              type="text"
+              v-model="form.email"
+              type="email"
               required
               class="input-field"
-              placeholder="Enter your user ID"
+              placeholder="Enter your email address"
             />
+            <p class="text-sm text-gray-600 mt-1">We'll send you confirmation and check-in details via email.</p>
           </div>
 
           <div>
@@ -41,10 +42,13 @@
             <div class="flex">
               <svg class="w-6 h-6 text-accent-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               <div class="ml-4">
-                <h3 class="text-lg font-bold text-accent-blue-800">⚠️ Important Information</h3>
+                <h3 class="text-lg font-bold text-accent-blue-800">📧 Important Information</h3>
                 <p class="text-lg font-semibold text-accent-blue-700 mt-2">
                   You have 15 minutes to arrive after reserving your spot. 
                   Your reservation will expire if you don't arrive within this window. ⏰
+                </p>
+                <p class="text-lg font-semibold text-accent-blue-700 mt-2">
+                  Confirmation emails will be sent to both you and the event organizer with your unique reservation ID and arrival time. 📬
                 </p>
               </div>
             </div>
@@ -87,12 +91,7 @@ import { useQueueStore } from '../stores/queueStore'
 const checkinStore = useCheckInStore()
 const queueStore = useQueueStore()
 
-const props = defineProps({
-  userId: {
-    type: String,
-    default: ''
-  }
-})
+// No props needed - email is entered by user
 
 const emit = defineEmits(['close', 'reserved'])
 
@@ -100,12 +99,8 @@ const loading = ref(false)
 const error = ref('')
 
 const form = reactive({
-  userID: '',
+  email: '',
   queueID: ''
-})
-
-onMounted(() => {
-  form.userID = props.userId
 })
 
 const handleSubmit = async () => {
@@ -113,16 +108,16 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    // Find the selected queue info for wait time calculation
+    // Find the selected queue info for wait time calculation and organizer email
     const selectedQueue = queueStore.queues.find(q => q.queueID === form.queueID)
     
-    const response = await checkinStore.reserveSpot(form.userID, form.queueID, selectedQueue)
+    const response = await checkinStore.reserveSpot(form.email, form.queueID, selectedQueue)
     
     // Use the reservation object returned from the store
-    const reservation = response.reservation || checkinStore.getReservationForUser(form.userID)
+    const reservation = response.reservation || checkinStore.getReservationForUser(form.email)
     
     // Emit reserved event and close modal
-    emit('reserved', form.userID, reservation)
+    emit('reserved', form.email, reservation)
     emit('close')
     
   } catch (err) {

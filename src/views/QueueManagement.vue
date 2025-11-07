@@ -4,7 +4,8 @@
     <div class="flex justify-between items-center">
       <div>
         <h1 class="heading-large">Queue Management 📋</h1>
-        <p class="text-xl font-bold text-gray-700 mt-4">Create and manage queues for events and venues ✨</p>
+        <p class="text-xl font-bold text-gray-700 mt-4">Create and manage queues for events and venues. ✨</p>
+        <p>(We display the most up-to-date user feedback) </p>
       </div>
       <button
         @click="showCreateModal = true"

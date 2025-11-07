@@ -6,7 +6,7 @@ describe('FeatureCard', () => {
   it('renders feature information correctly', () => {
     const feature = {
       name: 'Queue Management',
-      description: 'Create and manage queues for events and venues',
+      description: 'Create and manage queues for events and venues. We display the most up-to-date user feedback',
       icon: 'Queue',
       color: 'blue'
     }

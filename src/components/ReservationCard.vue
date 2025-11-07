@@ -3,7 +3,8 @@
     <div class="flex justify-between items-start mb-4">
       <div>
         <h3 class="text-lg font-semibold text-gray-900">{{ reservation.queueID }}</h3>
-        <p class="text-sm text-gray-600">Reservation #{{ reservation._id }}</p>
+        <p class="text-sm text-gray-600">Anonymous User Check-in</p>
+        <p class="text-xs text-gray-500">Reservation #{{ reservation._id.slice(-8) }}</p>
       </div>
       <div class="flex items-center space-x-2">
         <span
@@ -41,7 +42,7 @@
       </div>
     </div>
 
-    <div class="flex space-x-2 mt-6">
+    <div v-if="showCancel" class="flex space-x-2 mt-6">
       <button
         v-if="reservation.status === 'active'"
         @click="$emit('cancel', reservation._id)"
@@ -60,6 +61,10 @@ const props = defineProps({
   reservation: {
     type: Object,
     required: true
+  },
+  showCancel: {
+    type: Boolean,
+    default: true
   }
 })
 
