@@ -109,8 +109,7 @@ const handlePredictionRun = (queueID, prediction) => {
 const cleanOldReports = async () => {
   try {
     await predictionStore.cleanOldReports()
-    // Show success message
-    alert('Old reports cleaned successfully')
+    // Reports and predictions cleared successfully (no popup)
   } catch (error) {
     console.error('Failed to clean old reports:', error)
   }
