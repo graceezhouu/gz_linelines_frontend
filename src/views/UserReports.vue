@@ -32,32 +32,50 @@
       </div>
     </div>
 
-    <!-- Filters -->
+    <!-- Search -->
     <div class="bg-white rounded-lg shadow-md p-6">
       <div class="flex flex-wrap items-center gap-4">
-        <div class="flex items-center space-x-2">
-          <label class="text-sm font-medium text-gray-700">Filter by Queue:</label>
-          <select v-model="selectedQueue" class="input-field w-48">
-            <option value="">All Queues</option>
-            <option v-for="queue in availableQueues" :key="queue" :value="queue">
-              {{ queue }}
-            </option>
-          </select>
-        </div>
-        <div class="flex items-center space-x-2">
-          <label class="text-sm font-medium text-gray-700">Status:</label>
-          <select v-model="statusFilter" class="input-field w-32">
-            <option value="">All</option>
-            <option value="validated">Validated</option>
-            <option value="pending">Pending</option>
-          </select>
+        <div class="flex items-center space-x-2 flex-1">
+          <label class="text-sm font-medium text-gray-700">Search by Queue Name:</label>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Enter queue name..."
+            class="input-field flex-1 max-w-md"
+            @keyup.enter="handleSearch"
+          />
         </div>
         <button
-          @click="loadReports"
+          @click="handleSearch"
+          class="btn-primary flex items-center space-x-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          <span>Search</span>
+        </button>
+        <button
+          @click="clearSearch"
           class="btn-secondary flex items-center space-x-2"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-          <span>Refresh</span>
+          <span>Clear</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Results Info -->
+    <div v-if="isSearchActive" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          <span class="text-sm font-medium text-blue-800">
+            Search results for "{{ searchQuery }}" ({{ filteredReports.length }} {{ filteredReports.length === 1 ? 'report' : 'reports' }} found)
+          </span>
+        </div>
+        <button
+          @click="clearSearch"
+          class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+        >
+          Clear Search
         </button>
       </div>
     </div>
@@ -76,12 +94,21 @@
 
     <!-- Empty State -->
     <div v-if="filteredReports.length === 0 && !reportStore.loading" class="text-center py-12">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">No reports found</h3>
-      <p class="text-gray-600 mb-6">Submit your first report or adjust your filters</p>
-      <button @click="showSubmitModal = true" class="btn-primary">
-        Submit Report
-      </button>
+      <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">
+        {{ isSearchActive ? 'No reports found for this search' : 'No reports found' }}
+      </h3>
+      <p class="text-gray-600 mb-6">
+        {{ isSearchActive ? 'Try a different search term or clear your search' : 'Submit your first report to get started' }}
+      </p>
+      <div class="space-x-4">
+        <button v-if="isSearchActive" @click="clearSearch" class="btn-secondary">
+          Clear Search
+        </button>
+        <button @click="showSubmitModal = true" class="btn-primary">
+          Submit Report
+        </button>
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -131,30 +158,49 @@ const showViewModal = ref(false)
 const showViewStatusModal = ref(false)
 const selectedReport = ref(null)
 const selectedQueueForStatus = ref('')
-const selectedQueue = ref('')
-const statusFilter = ref('')
 const prePopulatedQueue = ref('')
-
-// Get available queues from the queue store
-const availableQueues = computed(() => {
-  return queueStore.queues.map(queue => queue.queueID)
-})
+const searchQuery = ref('')
+const searchResults = ref([])
+const isSearchActive = ref(false)
 
 const filteredReports = computed(() => {
-  let reports = [...reportStore.reports]
-
-  if (selectedQueue.value) {
-    reports = reports.filter(report => report.queue === selectedQueue.value)
-  }
-
-  if (statusFilter.value) {
-    const isValid = statusFilter.value === 'validated'
-    reports = reports.filter(report => report.validated === isValid)
-  }
-
+  let reports = isSearchActive.value ? searchResults.value : [...reportStore.reports]
+  
   // Sort reports by timestamp (most recent first)
   return reports.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
 })
+
+const handleSearch = () => {
+  console.log('handleSearch called with query:', searchQuery.value)
+  console.log('Total reports in store:', reportStore.reports.length)
+  console.log('Sample reports:', reportStore.reports.slice(0, 3))
+  
+  if (!searchQuery.value.trim()) {
+    // If search query is empty, show all reports
+    clearSearch()
+    return
+  }
+
+  // Search through all reports and filter by queue name containing the search query
+  const query = searchQuery.value.toLowerCase().trim()
+  console.log('Searching for:', query)
+  
+  searchResults.value = reportStore.reports.filter(report => {
+    const queueName = report.queue ? report.queue.toLowerCase() : ''
+    const matches = queueName.includes(query)
+    console.log(`Report queue: "${report.queue}" matches "${query}":`, matches)
+    return matches
+  })
+  
+  console.log('Search results:', searchResults.value.length, searchResults.value)
+  isSearchActive.value = true
+}
+
+const clearSearch = () => {
+  searchQuery.value = ''
+  searchResults.value = []
+  isSearchActive.value = false
+}
 
 const handleReportSubmitted = (report) => {
   showSubmitModal.value = false
