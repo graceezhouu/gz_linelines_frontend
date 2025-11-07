@@ -51,7 +51,18 @@ export const queueStatusAPI = {
   },
 
   getAllQueues: async () => {
+    console.log('🌐 API Configuration check:')
+    console.log('- API_BASE_URL:', API_BASE_URL)
+    console.log('- VITE_API_BASE_URL env var:', import.meta.env.VITE_API_BASE_URL)
+    console.log('- All env vars:', import.meta.env)
+    
     const response = await api.post('/api/QueueStatus/_getAllQueues', {})
+    console.log('📡 Raw API response:')
+    console.log('- Status:', response.status)
+    console.log('- Headers:', response.headers)
+    console.log('- Data type:', typeof response.data)
+    console.log('- Data:', response.data)
+    
     return response.data
   }
 }
