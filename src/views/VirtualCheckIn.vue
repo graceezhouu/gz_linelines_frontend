@@ -68,30 +68,13 @@
       />
     </div>
 
-    <!-- All Reservations (Anonymous) -->
-    <div v-if="allReservations.length > 0" class="space-y-4">
-      <h2 class="text-xl font-bold text-gray-900">Recent Check-ins (All Users)</h2>
-      <p class="text-sm text-gray-600 mb-4">Showing anonymous user check-ins for transparency</p>
-      <div class="space-y-4">
-        <ReservationCard
-          v-for="reservation in allReservations"
-          :key="reservation._id"
-          :reservation="reservation"
-          :showCancel="false"
-        />
-      </div>
-    </div>
-
     <!-- Empty State -->
-    <div v-if="allReservations.length === 0 && !checkinStore.loading && !successMessage" class="text-center py-16">
+    <div v-if="!currentUserReservation && !checkinStore.loading && !successMessage" class="text-center py-16">
       <div class="w-24 h-24 bg-gradient-to-br from-accent-blue-400 to-accent-green-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-bubble transform hover:rotate-12 transition-all duration-300">
         <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
       </div>
       <h3 class="heading-medium mb-4">No reservations yet! 📱</h3>
-      <p class="text-xl font-bold text-gray-700 mb-8">Reserve your first spot to get started ✨</p>
-      <button @click="showReserveModal = true" class="btn-primary">
-        Reserve Your First Spot 🚀
-      </button>
+      <p class="text-xl font-bold text-gray-700 mb-8">Use the "Reserve Spot" button above to get started ✨</p>
     </div>
 
     <!-- Loading State -->
@@ -130,10 +113,6 @@ const countdownInterval = ref(null)
 const currentUserReservation = computed(() => {
   if (!currentUserEmail.value) return null
   return checkinStore.getReservationForUser(currentUserEmail.value)
-})
-
-const allReservations = computed(() => {
-  return Object.values(checkinStore.reservations)
 })
 
 const activeReservation = computed(() => {
@@ -216,16 +195,6 @@ const handleCancelReservation = async (reservationID) => {
     clearSuccessMessage()
   } catch (error) {
     console.error('Failed to cancel reservation:', error)
-  }
-}
-
-const loadUserReservations = () => {
-  // In a real app, you'd load reservations for the specific user
-  // For now, we'll just show all reservations
-  
-  // If user has an active reservation, start the countdown
-  if (activeReservation.value) {
-    startCountdown()
   }
 }
 
