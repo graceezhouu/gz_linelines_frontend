@@ -161,6 +161,11 @@ export const useQueueStore = defineStore('queue', {
       this.error = null
       try {
         await queueStatusAPI.createQueue(queueData)
+        
+        // 🎯 FALLBACK FIX: Introduce a small delay to resolve race conditions 
+        // in deployed environments before fetching the new data.
+        await new Promise(resolve => setTimeout(resolve, 500)) 
+        
         // Refresh queues list after creation
         await this.loadQueues()
       } catch (error) {
