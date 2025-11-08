@@ -38,7 +38,6 @@
             <select v-model="form.modelID" class="input-field">
               <option value="default">Default Model</option>
               <option value="advanced">Advanced Model</option>
-              <option value="premium">Premium Model</option>
             </select>
           </div>
 

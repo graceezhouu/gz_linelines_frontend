@@ -4,7 +4,7 @@
     <div class="flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-bold text-gray-900">User Reports</h1>
-        <p class="text-gray-600 mt-2">Submit and manage real-time queue reports</p>
+        <p class="text-gray-600 mt-2">Submit and manage real-time queue reports. Validating reports helps us to make better predictions. </p>
       </div>
       <button
         @click="showSubmitModal = true"

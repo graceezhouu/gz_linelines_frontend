@@ -49,7 +49,7 @@ const features = ref([
   },
   {
     name: 'User Reports',
-    description: 'Submit and manage real-time queue reports',
+    description: 'Submit and manage real-time queue reports.',
     icon: 'FileText',
     path: '/reports',
     color: 'purple'
