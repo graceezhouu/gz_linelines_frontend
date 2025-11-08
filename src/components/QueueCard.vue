@@ -27,13 +27,13 @@
       <div class="bg-gradient-to-br from-accent-blue-50 to-accent-blue-100 p-4 rounded-2xl border-2 border-accent-blue-200 text-center">
         <p class="text-lg font-bold text-accent-blue-800 mb-1">⏱️ Wait Time</p>
         <p class="text-3xl font-heading font-bold text-accent-blue-900">
-          {{ queue.estWaitTime ? queue.estWaitTime + ' min' : 'N/A' }}
+          {{ displayData.waitTime !== 'N/A' ? displayData.waitTime + ' min' : 'N/A' }}
         </p>
       </div>
       <div class="bg-gradient-to-br from-accent-green-50 to-accent-green-100 p-4 rounded-2xl border-2 border-accent-green-200 text-center">
         <p class="text-lg font-bold text-accent-green-800 mb-1">👥 In Line</p>
         <p class="text-3xl font-heading font-bold text-accent-green-900">
-          {{ queue.estPplInLine || 'N/A' }}
+          {{ displayData.peopleInLine || 'N/A' }}
         </p>
       </div>
     </div>
@@ -71,7 +71,10 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+import { useQueueStore } from '../stores/queueStore'
+
+const props = defineProps({
   queue: {
     type: Object,
     required: true
@@ -87,6 +90,11 @@ defineProps({
 })
 
 defineEmits(['view-status', 'update-status', 'validate'])
+
+const queueStore = useQueueStore()
+
+// Get display data that uses most recent user reports if available
+const displayData = computed(() => queueStore.getQueueDisplayData(props.queue.queueID))
 
 const formatTime = (timestamp) => {
   if (!timestamp) return 'Never'

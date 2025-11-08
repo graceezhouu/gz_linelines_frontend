@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { userReportAPI } from '../services/api'
+import { useQueueStore } from './queueStore'
 
 export const useReportStore = defineStore('report', {
   state: () => ({
@@ -21,6 +22,11 @@ export const useReportStore = defineStore('report', {
           timestamp: new Date().toISOString(),
           validated: null // Initially unvalidated
         })
+        
+        // Immediately refresh queue data to show updated numbers
+        const queueStore = useQueueStore()
+        await queueStore.getMostRecentUserReports()
+        
         return response
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to submit report'
@@ -42,6 +48,11 @@ export const useReportStore = defineStore('report', {
         }
         // Also refresh the reports to ensure consistency
         await this.loadAllReports()
+        
+        // Immediately refresh queue data since validation status affects display
+        const queueStore = useQueueStore()
+        await queueStore.getMostRecentUserReports()
+        
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to update validation status'
         throw error

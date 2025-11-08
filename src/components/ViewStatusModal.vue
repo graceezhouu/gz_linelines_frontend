@@ -37,13 +37,13 @@
             <div class="text-center p-4 bg-blue-50 rounded-lg">
               <p class="text-sm text-blue-600 font-medium">Wait Time</p>
               <p class="text-2xl font-bold text-blue-900">
-                {{ currentStatus.estWaitTime ? currentStatus.estWaitTime + ' min' : 'N/A' }}
+                {{ displayData.waitTime !== 'N/A' ? displayData.waitTime + ' min' : 'N/A' }}
               </p>
             </div>
             <div class="text-center p-4 bg-green-50 rounded-lg">
               <p class="text-sm text-green-600 font-medium">People in Line</p>
               <p class="text-2xl font-bold text-green-900">
-                {{ currentStatus.estPplInLine || 'N/A' }}
+                {{ displayData.peopleInLine || 'N/A' }}
               </p>
             </div>
           </div>
@@ -191,7 +191,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useQueueStore } from '../stores/queueStore'
 import { useReportStore } from '../stores/reportStore'
 
@@ -207,6 +207,9 @@ defineEmits(['close'])
 const queueStore = useQueueStore()
 const reportStore = useReportStore()
 
+// Get display data that uses most recent user reports if available
+const displayData = computed(() => queueStore.getQueueDisplayData(props.queue.queueID))
+
 const currentStatus = ref(null)
 const queueReports = ref([])
 const loading = ref(false)
@@ -221,6 +224,8 @@ const refreshStatus = async () => {
   try {
     const status = await queueStore.getQueueStatus(props.queue.queueID)
     currentStatus.value = status
+    // Also refresh user reports to get the latest data for display
+    await queueStore.getMostRecentUserReports()
   } catch (err) {
     error.value = 'Failed to load queue status'
     console.error('Error fetching queue status:', err)
@@ -271,6 +276,8 @@ const validateReport = async (reportId, isValid) => {
     }
     // Refresh reports to ensure consistency with backend
     await refreshReports()
+    // Note: reportStore.setReportValidationStatus already triggers queueStore.getMostRecentUserReports()
+    // so the displayData computed property will automatically update
   } catch (err) {
     console.error('Error validating report:', err)
   } finally {

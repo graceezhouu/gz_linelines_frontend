@@ -145,14 +145,16 @@
 
 // file: queueStore.js
 import { defineStore } from 'pinia'
-import { queueStatusAPI } from '../services/api'
+import { queueStatusAPI, userReportAPI } from '../services/api'
 
 export const useQueueStore = defineStore('queue', {
   state: () => ({
     queues: [],
     currentQueue: null,
     loading: false,
-    error: null
+    error: null,
+    queueReports: {}, // Store most recent user reports for each queue
+    refreshInterval: null // Store interval ID for periodic refreshes
   }),
 
   actions: {
@@ -192,6 +194,9 @@ export const useQueueStore = defineStore('queue', {
           queue.estWaitTime = estWaitTime
           queue.lastUpdated = new Date().toISOString()
         }
+        
+        // Refresh user reports to get the latest data
+        await this.getMostRecentUserReports()
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to update queue status'
         throw error
@@ -277,6 +282,9 @@ export const useQueueStore = defineStore('queue', {
         
         console.log('✅ Final queues set:', this.queues.length, 'items')
         
+        // After loading queues, fetch the most recent user reports
+        await this.getMostRecentUserReports()
+        
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to load queues'
         console.error('❌ Error loading queues:')
@@ -287,6 +295,64 @@ export const useQueueStore = defineStore('queue', {
         this.queues = [] // Ensure queues is always an array
       } finally {
         this.loading = false
+      }
+    },
+
+    async getMostRecentUserReports() {
+      try {
+        // For each queue, get the most recent validated user report
+        for (const queue of this.queues) {
+          try {
+            const reports = await userReportAPI.getValidatedReportsByQueue(queue.queueID)
+            if (reports && reports.length > 0) {
+              // Sort by timestamp to get the most recent report
+              const sortedReports = reports.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+              this.queueReports[queue.queueID] = sortedReports[0]
+            }
+          } catch (error) {
+            console.log(`No validated reports found for queue ${queue.queueID}`)
+            // Continue with other queues even if one fails
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user reports:', error)
+      }
+    },
+
+    // Get display values for wait time and people in line
+    // Uses most recent user report if available, falls back to queue defaults
+    getQueueDisplayData(queueID) {
+      const queue = this.queues.find(q => q.queueID === queueID)
+      const mostRecentReport = this.queueReports[queueID]
+      
+      if (!queue) return { waitTime: 'N/A', peopleInLine: 'N/A' }
+      
+      return {
+        waitTime: mostRecentReport?.currentWaitTime ?? queue.estWaitTime ?? 'N/A',
+        peopleInLine: mostRecentReport?.estimatedPeopleInLine ?? queue.estPplInLine ?? 'N/A'
+      }
+    },
+
+    startPeriodicRefresh() {
+      // Clear any existing interval
+      if (this.refreshInterval) {
+        clearInterval(this.refreshInterval)
+      }
+      
+      // Refresh user reports every 30 seconds
+      this.refreshInterval = setInterval(async () => {
+        try {
+          await this.getMostRecentUserReports()
+        } catch (error) {
+          console.error('Error during periodic refresh:', error)
+        }
+      }, 30000) // 30 seconds
+    },
+
+    stopPeriodicRefresh() {
+      if (this.refreshInterval) {
+        clearInterval(this.refreshInterval)
+        this.refreshInterval = null
       }
     },
 

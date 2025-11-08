@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useQueueStore } from '../stores/queueStore'
 import QueueCard from '../components/QueueCard.vue'
 import CreateQueueModal from '../components/CreateQueueModal.vue'
@@ -132,5 +132,12 @@ const handleViewStatus = async (queue) => {
 
 onMounted(async () => {
   await queueStore.loadQueues()
+  // Start periodic refresh for real-time updates
+  queueStore.startPeriodicRefresh()
+})
+
+// Clean up interval when component unmounts
+onUnmounted(() => {
+  queueStore.stopPeriodicRefresh()
 })
 </script>

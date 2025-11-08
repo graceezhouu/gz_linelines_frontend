@@ -202,6 +202,9 @@ onMounted(() => {
   // Load queues to ensure consistency
   queueStore.loadQueues()
   
+  // Start periodic refresh for real-time updates
+  queueStore.startPeriodicRefresh()
+  
   // If user already has an active reservation, start the countdown
   if (activeReservation.value) {
     const queue = queueStore.queues.find(q => q.queueID === activeReservation.value.queueID)
