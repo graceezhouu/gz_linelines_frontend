@@ -78,8 +78,8 @@ const mobileMenuOpen = ref(false)
 const navigationItems = [
   { name: 'Dashboard', path: '/', routeName: 'Dashboard' },
   { name: 'Queues', path: '/queues', routeName: 'QueueManagement' },
-  { name: 'Predictions', path: '/predictions', routeName: 'Predictions' },
   { name: 'Reports', path: '/reports', routeName: 'UserReports' },
+  { name: 'Predictions', path: '/predictions', routeName: 'Predictions' },
   { name: 'Virtual Check-in', path: '/checkin', routeName: 'VirtualCheckIn' }
 ]
 
