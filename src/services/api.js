@@ -36,17 +36,17 @@ api.interceptors.response.use(
 // QueueStatus API
 export const queueStatusAPI = {
   createQueue: async (data) => {
-    const response = await api.post('/api/QueueStatus/createQueue', data)
+    const response = await api.post('/QueueStatus/createQueue', data)
     return response.data
   },
 
   updateStatus: async (data) => {
-    const response = await api.post('/api/QueueStatus/updateStatus', data)
+    const response = await api.post('/QueueStatus/updateStatus', data)
     return response.data
   },
 
   viewStatus: async (queueID) => {
-    const response = await api.post('/api/QueueStatus/_viewStatus', { queueID })
+    const response = await api.post('/QueueStatus/_viewStatus', { queueID })
     return response.data
   },
 
@@ -56,7 +56,7 @@ export const queueStatusAPI = {
     console.log('- VITE_API_BASE_URL env var:', import.meta.env.VITE_API_BASE_URL)
     console.log('- All env vars:', import.meta.env)
     
-    const response = await api.post('/api/QueueStatus/_getAllQueues', {})
+    const response = await api.post('/QueueStatus/_getAllQueues', {})
     console.log('📡 Raw API response:')
     console.log('- Status:', response.status)
     console.log('- Headers:', response.headers)
