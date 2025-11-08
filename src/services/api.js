@@ -70,17 +70,17 @@ export const queueStatusAPI = {
 // Prediction API
 export const predictionAPI = {
   runPrediction: async (queueID, modelID = 'default') => {
-    const response = await api.post('/api/Prediction/runPrediction', { queueID, modelID })
+    const response = await api.post('/Prediction/runPrediction', { queueID, modelID })
     return response.data
   },
 
   getForecast: async (queueID) => {
-    const response = await api.post('/api/Prediction/getForecast', { queueID })
+    const response = await api.post('/Prediction/getForecast', { queueID })
     return response.data
   },
 
   cleanOldReports: async () => {
-    const response = await api.post('/api/Prediction/cleanOldReports', {})
+    const response = await api.post('/Prediction/cleanOldReports', {})
     return response.data
   }
 }
@@ -88,12 +88,12 @@ export const predictionAPI = {
 // UserReport API
 export const userReportAPI = {
   submitReport: async (data) => {
-    const response = await api.post('/api/UserReport/submitReport', data)
+    const response = await api.post('/UserReport/submitReport', data)
     return response.data
   },
 
   setReportValidationStatus: async (reportID, isValid) => {
-    const response = await api.post('/api/UserReport/setReportValidationStatus', {
+    const response = await api.post('/UserReport/setReportValidationStatus', {
       report: reportID,
       isValid
     })
@@ -101,17 +101,17 @@ export const userReportAPI = {
   },
 
   getReport: async (reportID) => {
-    const response = await api.post('/api/UserReport/_getReport', { report: reportID })
+    const response = await api.post('/UserReport/_getReport', { report: reportID })
     return response.data
   },
 
   getValidatedReportsByQueue: async (queueID) => {
-    const response = await api.post('/api/UserReport/_getValidatedReportsByQueue', { queue: queueID })
+    const response = await api.post('/UserReport/_getValidatedReportsByQueue', { queue: queueID })
     return response.data
   },
 
   getAllReports: async () => {
-    const response = await api.post('/api/UserReport/_getAllReports', {})
+    const response = await api.post('/UserReport/_getAllReports', {})
     return response.data
   }
 }
@@ -119,27 +119,27 @@ export const userReportAPI = {
 // VirtualCheckIn API
 export const virtualCheckInAPI = {
   reserveSpot: async (email, queueID, organizerEmail) => {
-    const response = await api.post('/api/VirtualCheckIn/reserveSpot', { email, queueID, organizerEmail })  
+    const response = await api.post('/VirtualCheckIn/reserveSpot', { email, queueID, organizerEmail })  
     return response.data
   },
 
   cancelSpot: async (reservationID) => {
-    const response = await api.post('/api/VirtualCheckIn/cancelSpot', { reservationID })
+    const response = await api.post('/VirtualCheckIn/cancelSpot', { reservationID })
     return response.data
   },
 
   expireReservations: async () => {
-    const response = await api.post('/api/VirtualCheckIn/expireReservations', {})
+    const response = await api.post('/VirtualCheckIn/expireReservations', {})
     return response.data
   },
 
   getReservationDetails: async (reservationID) => {
-    const response = await api.post('/api/VirtualCheckIn/_getReservationDetails', { reservationID })
+    const response = await api.post('/VirtualCheckIn/_getReservationDetails', { reservationID })
     return response.data
   },
 
   getUserActiveReservation: async (email, queueID) => {
-    const response = await api.post('/api/VirtualCheckIn/_getUserActiveReservation', { email, queueID })
+    const response = await api.post('/VirtualCheckIn/_getUserActiveReservation', { email, queueID })
     return response.data
   }
 }
