@@ -49,7 +49,7 @@
           </div>
 
           <div class="text-center p-4 bg-gray-50 rounded-lg">
-            <p class="text-sm text-gray-600 font-medium">Last Updated</p>
+            <p class="text-sm text-gray-600 font-medium">Creation Time</p>
             <p class="text-lg font-semibold text-gray-900">
               {{ formatTime(currentStatus.lastUpdated) }}
             </p>
