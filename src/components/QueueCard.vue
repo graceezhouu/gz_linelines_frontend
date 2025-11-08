@@ -39,7 +39,7 @@
     </div>
 
     <div class="text-lg font-bold text-gray-600 mb-6 p-3 bg-gray-100 rounded-xl text-center">
-      🕐 Last updated: {{ formatTime(queue.lastUpdated) }}
+      🕐 Creation Time: {{ formatTime(queue.lastUpdated) }}
     </div>
 
     <div class="flex space-x-3">

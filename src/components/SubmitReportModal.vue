@@ -16,13 +16,13 @@
         <!-- Form -->
         <form @submit.prevent="handleSubmit" class="space-y-4">
           <div>
-            <label class="label">User ID</label>
+            <label class="label">Email</label>
             <input
               v-model="form.user"
               type="text"
               required
               class="input-field"
-              placeholder="e.g., user123"
+              placeholder="e.g., johnsmith@gmail.com"
             />
           </div>
 

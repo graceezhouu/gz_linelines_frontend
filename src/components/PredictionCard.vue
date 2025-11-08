@@ -39,12 +39,7 @@
       </div>
 
       <!-- Last Run Time -->
-      <div class="text-center p-3 bg-gray-50 rounded-lg">
-        <p class="text-xs text-gray-600 font-medium">Last Updated</p>
-        <p class="text-sm font-semibold text-gray-900">
-          {{ formatTime(prediction.lastRun) }}
-        </p>
-      </div>
+      
     </div>
   </div>
 </template>
